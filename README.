@@ -1,0 +1,24 @@
+# movieInfo
+This simple application find all the movie names in your computer and show info from IMDB about those movies
+
+
+1.	Search the parent directory
+2.	No matter how the movie files, files inside folder are stored, just collect all the file names, store them in a set
+3.	From the file names, collect the movie name ( lots of regex )
+4.	Now, send request to IMDB site, with the movie name and download the returned HTML page
+5.	Parse the HTML page and collect the movie genre, rating
+6.	Once all the movie have been collected, output the result in an HTML file
+
+
+
+Things need to research :
+	1.	How to recursively collect file names inside a root directory
+	2.	How to download HTML pages in Java Console App
+	3.	How to parse HTML with regex
+	4.	Most importantly, how to find that specific movie page !!! in IMDB site from your console app 
+
+
+
+
+Researched :
+	1.	To search a movie by name, just send request to ---> http://www.imdb.com/find?q=[movie name]
