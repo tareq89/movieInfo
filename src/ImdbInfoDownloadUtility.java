@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -19,6 +18,14 @@ public class ImdbInfoDownloadUtility {
     private String URLString;
     private static String imdbSearchUrl = HTTP_WWW_IMDB_COM + "/find?q=";
     private MovieInfo movieInfo;
+
+    private final String FIRST_SEARCH_RESULT  = "<td class=\"result_text\"> <a href=\"(.*?)\"?>.*?</a>";
+    private final String NAME  = "<h1 class=\"header\"> <span class=\"itemprop\" itemprop=\"name\">(.*?)</span>";
+    private final String RATING  = "<span itemprop=\"ratingValue\">(.*?)</span>";
+    private final String GENRE  = "<span class=\"itemprop\" itemprop=\"genre\">(.*?)</span>";
+    private final String DESCRIPTION  = "<p itemprop=\"description\">(.*?)</p>";
+    private final String IMAGE  = "<div class=\"image\">.*?src=\"(.*?)\".*?</div>";
+    private final String NOT_FOUND  = "No results found for";
 
 
 
@@ -73,18 +80,18 @@ public class ImdbInfoDownloadUtility {
 
     private String getIMDBMoviePage(String movieName){
 
-        Map<String, String> patternMap = PatternUtility.getPatternMap();
+
 
         String movieSearchUrl = imdbSearchUrl + movieName;
         String imdbSearchResultHtml = downloadFromWeb(movieSearchUrl);
 
-        String imdbMovieID = getImdbMovieID(imdbSearchResultHtml, patternMap.get("firstSearchResult"));
+        String imdbMovieID = getImdbMovieID(imdbSearchResultHtml, FIRST_SEARCH_RESULT);
         String imdbMoviePageUrl = HTTP_WWW_IMDB_COM + imdbMovieID;
 
         movieInfo.setImdbLink(imdbMoviePageUrl);
         String moviePageHtml = downloadFromWeb(imdbMoviePageUrl);
 
-        if (imdbSearchResultHtml.contains(patternMap.get("NotFound")))
+        if (imdbSearchResultHtml.contains(NOT_FOUND))
             moviePageHtml = "not found";
 
         return moviePageHtml;
@@ -122,8 +129,6 @@ public class ImdbInfoDownloadUtility {
         movieInfo = new MovieInfo();
 
         PatternUtility patternUtility = new PatternUtility();
-        Map<String, String> patternMap = PatternUtility.getPatternMap();
-
         String movieFileName = patternUtility.cleanFileName(movieFolderPath);
 
         String moviePageHtml = getIMDBMoviePage(movieFileName);
@@ -132,22 +137,44 @@ public class ImdbInfoDownloadUtility {
 
             if (movieFound){
 
-                movieInfo.setMovieName(patternUtility.findPatternInString(moviePageHtml, patternMap.get("Name"), "name"));
-                movieInfo.setRating(patternUtility.findPatternInString(moviePageHtml, patternMap.get("Rating"), "rating"));
-                movieInfo.setGenre(patternUtility.findPatternInString(moviePageHtml, patternMap.get("Genre"), "genre"));
-                movieInfo.setDesCription(patternUtility.findPatternInString(moviePageHtml, patternMap.get("Description"), "description"));
-                movieInfo.setDesCription(patternUtility.aTagCleaner(movieInfo.getDescription()));
-                if (movieInfo.getDescription().trim().equals("")){
+                String movieName = patternUtility.findPatternInString(moviePageHtml, NAME, "name");
+                movieInfo.setMovieName(movieName);
+
+
+                String rating = patternUtility.findPatternInString(moviePageHtml, RATING, "rating");
+                movieInfo.setRating(rating);
+
+
+                String genre = patternUtility.findPatternInString(moviePageHtml, GENRE, "genre");
+                movieInfo.setGenre(genre);
+
+
+                String description = patternUtility.findPatternInString(moviePageHtml, DESCRIPTION, "description");
+                description = patternUtility.aTagCleaner(description);
+
+                if (isDescriptionAvailable(description)){
                     movieInfo.setDesCription("Description not available");
+                } else{
+                    movieInfo.setDesCription(description);
                 }
 
-                movieInfo.setImageLink(patternUtility.findPatternInString(moviePageHtml, patternMap.get("Image"), "image"));
-                if (movieInfo.getImageLink().equals("")){
+
+                String imageLink = patternUtility.findPatternInString(moviePageHtml, IMAGE, "image");
+
+                if (isImageLinkAvailable(imageLink)){
                     movieInfo.setImageLink(IMAGE_NOT_FOUND_URL);
+                } else {
+                    movieInfo.setImageLink(imageLink);
                 }
             }
         }
 
         return movieInfo;
+    }
+    private boolean isDescriptionAvailable(String description){
+        return description.trim().equals("");
+    }
+    private boolean isImageLinkAvailable(String imagelink){
+        return imagelink.trim().equals("");
     }
 }

@@ -1,7 +1,5 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,21 +12,7 @@ public class PatternUtility {
     private String FILENAME;
 
 
-    public static Map<String, String> getPatternMap(){
 
-        Map<String, String> patternMap = new HashMap<String, String>();
-
-        patternMap.put("firstSearchResult", "<td class=\"result_text\"> <a href=\"(.*?)\"?>.*?</a>");
-        patternMap.put("Name", "<h1 class=\"header\"> <span class=\"itemprop\" itemprop=\"name\">(.*?)</span>");
-        patternMap.put("Rating", "<span itemprop=\"ratingValue\">(.*?)</span>");
-        patternMap.put("Genre", "<span class=\"itemprop\" itemprop=\"genre\">(.*?)</span>");
-        patternMap.put("Description", "<p itemprop=\"description\">(.*?)</p>");
-        patternMap.put("Image", "<div class=\"image\">.*?src=\"(.*?)\".*?</div>");
-        patternMap.put("NotFound", "No results found for");
-
-
-        return patternMap;
-    }
 
     public String cleanFileName(String fileName){
 
