@@ -26,15 +26,14 @@ public class FileServiceUtility {
 
                     String moviePathString = movieFile.getPath();
                     Path moviePath = Paths.get(moviePathString);
-                    movieFolders.add(moviePath);
 
+                    movieFolders.add(moviePath);
                     makeDirectoryList(movieFile.getAbsolutePath());  // recursion
                 }
             }
         }
         return movieFolders;
     }
-
 
 
 

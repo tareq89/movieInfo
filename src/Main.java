@@ -8,7 +8,7 @@ public class Main {
 
     public static void main(String ... args){
 
-        String movieRootDirectory = "/home/tareq.aziz/movies3/";
+        String movieRootDirectory = "/home/tareq.aziz/movies/";
         String outputHtmlFilePath = movieRootDirectory + "output.html";
 
 

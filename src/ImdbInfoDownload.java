@@ -40,9 +40,9 @@ public class ImdbInfoDownload {
         try {
             html = downloadFromWeb();
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            System.out.println("mall formed URL  : " + this.URLString);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("URL not found : " + this.URLString);
         } finally {
             return html;
         }
@@ -117,7 +117,7 @@ public class ImdbInfoDownload {
         movieInfo = new MovieInfo();
         for(Path path : paths){
             movieInfo = getMovieInfo(path);
-            if (movieInfo.getMovieName()!=null){
+            if (!movieInfo.getMovieName().equals("")){
                 movieinfoSet.add(movieInfo);
             }
         }
@@ -146,7 +146,13 @@ public class ImdbInfoDownload {
 
         movieInfo = new MovieInfo();
 
+        if (movieFolderPath.contains("anch")){
+            System.out.println(movieFolderPath);
+        }
         String movieFileName = PatternUtility.cleanFileName(movieFolderPath);
+        System.out.println("MovieFile Name : " + movieFileName);
+
+
         String moviePageHtml = getIMDBMoviePage(movieFileName);
 
         if (!moviePageHtml.equals("not found")){
@@ -156,6 +162,8 @@ public class ImdbInfoDownload {
 
                 String movieName = PatternUtility.findPatternInString(moviePageHtml, NAME, "name");
                 movieInfo.setMovieName(movieName);
+                System.out.println("Movie Name     : " + movieName);
+                System.out.println("\n\n\n");
 
 
                 String rating = PatternUtility.findPatternInString(moviePageHtml, RATING, "rating");

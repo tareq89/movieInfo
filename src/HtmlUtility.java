@@ -57,8 +57,8 @@ public class HtmlUtility {
             htmlOutput += "<h2>"+ movieInfo.getMovieName() + "</h2>";
 
             htmlOutput += "<div>";
-            htmlOutput += "<a id=\"left\" href=\""+ movieInfo.getDiskPath() + "\"> Disk Location</a>";
-            htmlOutput += "<a id=\"right\" href=\""+ movieInfo.getImdbLink() + "\"> IMDB</a>";
+            htmlOutput += "<a target=\"_blank\" id=\"left\" href=\""+ movieInfo.getDiskPath() + "\"> Disk Location</a>";
+            htmlOutput += "<a target=\"_blank\" id=\"right\" href=\""+ movieInfo.getImdbLink() + "\"> IMDB</a>";
             htmlOutput += "</div>";
 
             htmlOutput += "</td>";

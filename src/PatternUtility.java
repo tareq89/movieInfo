@@ -54,14 +54,37 @@ public class PatternUtility {
         }
         scanner.close();
         FILENAME = FILENAME.replaceAll("\\.|\\s", "+");
+        FILENAME = yearFirstBracketAdder();
+        FILENAME = yearThirdBracketRemover();
 
         return FILENAME;
     }
 
 
 
+    private static String yearFirstBracketAdder(){
 
+        String bracketString = findPatternInString(FILENAME, "(\\(\\d\\d\\d\\d\\))", "year");
+        if (bracketString.equals("")){
 
+            String yearString = findPatternInString(FILENAME, "(\\d\\d\\d\\d)", "year");
+
+            if (!yearString.equals("")){
+                String replacingYearString = "(" + yearString + ")";
+                FILENAME = FILENAME.replaceAll(yearString, replacingYearString);
+            }
+        }
+
+        return FILENAME;
+    }
+
+    private static String yearThirdBracketRemover(){
+
+        if (FILENAME.contains("[") || FILENAME.contains("]")){
+            FILENAME = FILENAME.replaceAll("]|\\[", "");
+        }
+        return FILENAME;
+    }
 
 
     public static String aTagCleaner(String textWithAtag) {
@@ -81,14 +104,18 @@ public class PatternUtility {
         Pattern p = Pattern.compile(pattern);
         Matcher m = p.matcher(toParse);
 
-        while (m.find()){
-            if (option.equals("genre")) {
-                matchedString += m.group(1) + " ";
+        try {
+            while (m.find()){
+                if (option.equals("genre")) {
+                    matchedString += m.group(1) + " ";
+                }
+                else{
+                    matchedString = m.group(1);
+                    break;
+                }
             }
-            else{
-                matchedString = m.group(1);
-                break;
-            }
+        } catch (IndexOutOfBoundsException e){
+
         }
         return matchedString;
     }
