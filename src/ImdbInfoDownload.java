@@ -33,7 +33,7 @@ public class ImdbInfoDownload {
 
 
 
-    public String downloadFromWeb(String urlString){
+    private String downloadFromWeb(String urlString){
 
         String html = "";
         this.URLString = urlString;
@@ -90,13 +90,13 @@ public class ImdbInfoDownload {
 
     private String getIMDBMoviePage(String movieName){
 
-
-
         String movieSearchUrl = imdbSearchUrl + movieName;
         String imdbSearchResultHtml = downloadFromWeb(movieSearchUrl);
 
+
         String imdbMovieID = getImdbMovieID(imdbSearchResultHtml, FIRST_SEARCH_RESULT);
         String imdbMoviePageUrl = HTTP_WWW_IMDB_COM + imdbMovieID;
+
 
         movieInfo.setImdbLink(imdbMoviePageUrl);
         String moviePageHtml = downloadFromWeb(imdbMoviePageUrl);
@@ -114,7 +114,6 @@ public class ImdbInfoDownload {
     public Set<MovieInfo> getMoviesInfos(Set<Path> paths){
 
         Set<MovieInfo> movieinfoSet = new TreeSet<MovieInfo>();
-        movieInfo = new MovieInfo();
         for(Path path : paths){
             movieInfo = getMovieInfo(path);
             if (!movieInfo.getMovieName().equals("")){
@@ -159,44 +158,48 @@ public class ImdbInfoDownload {
             boolean movieFound = !moviePageHtml.equals("not found");
 
             if (movieFound){
-
-                String movieName = PatternUtility.findPatternInString(moviePageHtml, NAME, "name");
-                movieInfo.setMovieName(movieName);
-                System.out.println("Movie Name     : " + movieName);
-                System.out.println("\n\n\n");
-
-
-                String rating = PatternUtility.findPatternInString(moviePageHtml, RATING, "rating");
-                movieInfo.setRating(rating);
-
-
-                String genre = PatternUtility.findPatternInString(moviePageHtml, GENRE, "genre");
-                movieInfo.setGenre(genre);
-
-
-                String description = PatternUtility.findPatternInString(moviePageHtml, DESCRIPTION, "description");
-                description = PatternUtility.aTagCleaner(description);
-
-                if (isDescriptionAvailable(description)){
-                    movieInfo.setDesCription("Description not available");
-                } else{
-                    movieInfo.setDesCription(description);
-                }
-
-
-                String imageLink = PatternUtility.findPatternInString(moviePageHtml, IMAGE, "image");
-
-                if (isImageLinkAvailable(imageLink)){
-                    movieInfo.setImageLink(IMAGE_NOT_FOUND_URL);
-                } else {
-                    movieInfo.setImageLink(imageLink);
-                }
+                populateMovieInfo(moviePageHtml);
             }
         }
 
         return movieInfo;
     }
 
+
+    private void populateMovieInfo(String moviePageHtml){
+
+        String movieName = PatternUtility.findPatternInString(moviePageHtml, NAME, "name");
+        movieInfo.setMovieName(movieName);
+        System.out.println("Movie Name     : " + movieName);
+        System.out.println("\n\n\n");
+
+
+        String rating = PatternUtility.findPatternInString(moviePageHtml, RATING, "rating");
+        movieInfo.setRating(rating);
+
+
+        String genre = PatternUtility.findPatternInString(moviePageHtml, GENRE, "genre");
+        movieInfo.setGenre(genre);
+
+
+        String description = PatternUtility.findPatternInString(moviePageHtml, DESCRIPTION, "description");
+        description = PatternUtility.aTagCleaner(description);
+
+        if (isDescriptionAvailable(description)){
+            movieInfo.setDesCription("Description not available");
+        } else{
+            movieInfo.setDesCription(description);
+        }
+
+
+        String imageLink = PatternUtility.findPatternInString(moviePageHtml, IMAGE, "image");
+
+        if (isImageLinkAvailable(imageLink)){
+            movieInfo.setImageLink(IMAGE_NOT_FOUND_URL);
+        } else {
+            movieInfo.setImageLink(imageLink);
+        }
+    }
 
 
 
@@ -209,13 +212,9 @@ public class ImdbInfoDownload {
 
 
 
-
-
     private boolean isImageLinkAvailable(String imagelink){
 
         boolean imageNotAvailable = imagelink.trim().equals("");
         return imageNotAvailable;
     }
-
-
 }

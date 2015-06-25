@@ -1,3 +1,6 @@
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Set;
 
@@ -22,5 +25,12 @@ public class Main {
         String htmlOutput = HtmlUtility.htmlOutput(movieInfoSet);
 
         FileServiceUtility.writeFile(outputHtmlFilePath, htmlOutput);
+
+        try {
+            Desktop.getDesktop().open(new File(outputHtmlFilePath));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
     }
 }
